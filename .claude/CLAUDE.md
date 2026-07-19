@@ -39,9 +39,12 @@ Slack (App Home / Slash Command / Block Kit申請フロー)
     Workload Identity / Managed Identity経由の認証チェーンを有効化する
   - クライアント側からMCPサーバーを呼ぶ経路は別途Entra ID認証（App Registration）で保護する
     （「誰がMCPサーバーを呼べるか」と「MCPサーバーがAzureに対して何をできるか」を分離する）
-- Managed IdentityにAzure側でRBACロールを付与する。Agentの用途ごとに最小権限で分ける:
-  - 相談・バッチ用Identity: `Reader` ロールのみ
-  - 申請フロー用Identity: 対象操作に必要な最小ロール（例: VM起動停止のみなら `Virtual Machine Contributor` を対象リソースグループに限定して付与。サブスク全体には付与しない）
+- Managed IdentityにAzure側でRBACロールを付与する（※ [ADR-001](../docs/adr-001_mcp-server-topology.md)により、
+  Identityは用途別に分けず単一構成とする。Agentごとの権限差はManaged Identity側ではなく
+  Foundry側の `allowed_tools` で制御する）:
+  - `Reader` ロールを付与し、加えて申請フロー用の操作に必要な最小ロール
+    （例: VM起動停止のみなら `Virtual Machine Contributor`）を対象リソースグループに限定して
+    同一Identityに付与する。サブスク全体への書き込みロール付与は行わない
 
 ### 2. Foundry Agent の分離設計
 用途ごとに **別Agent** を作成し、ツールとallowed_toolsを分離する。1つのAgentに全権限を持たせない。
@@ -101,9 +104,10 @@ Slack (App Home / Slash Command / Block Kit申請フロー)
   4. 該当ありの場合のみSlack通知
 
 ### 6. 権限・セキュリティ（まとめ）
-- 二重防御を徹底する:
-  1. Foundry側 allowed_tools でAgentごとに呼べるツールを絞る
-  2. Managed IdentityのAzure RBACで実行時の権限範囲を絞る（Agentが誤って許可外のツールを呼んでもAzure側で弾かれる）
+- 権限制御はFoundry側 `allowed_tools` によるAgentごとのツール制限を主防御とする。Managed Identityは
+  単一構成（[ADR-001](../docs/adr-001_mcp-server-topology.md)）のため、Azure RBACは`allowed_tools`から
+  独立した第二の防御層としては機能しない点に留意する（受容済みリスク。将来的にAgent用途別の
+  MCPサーバー分離を再検討する余地あり）
 - 書き込み系・破壊的操作ツールは `ask every time`（承認必須）に設定
 - MCPサーバー自体へのアクセスもEntra ID認証で保護し、誰でも叩ける状態にしない
 - Slack Bot Token, Foundry API キー等はSecrets管理(環境変数 or Key Vault)に格納
