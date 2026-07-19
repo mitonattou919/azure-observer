@@ -153,8 +153,6 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 ## 未決事項 / オープンクエスチョン
 
 - プロジェクトの背景（既存フローの課題）、関係者・ステークホルダー、期限
-- IaCツール選定（Bicep / Terraform）
-- Agent Bが本フェーズで対応する申請操作の具体的な一覧（VM起動停止以外に何を含めるか）
 - アプリケーションのモニタリング/ロギング基盤の要否（Application Insights等をACAの標準ログに
   加えて導入するか）
 - スレッド自動リセットの閾値「30日」の妥当性（[ADR-011](adr-011_agent-thread-separation.md)）
@@ -181,3 +179,5 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 - [ADR-010: Slack UI構成とチャネルルーティング](adr-010_slack-entry-points-and-channel-routing.md)
 - [ADR-011: Foundryスレッドモデルの見直し（Agent A入口別・Agent B使い捨て）](adr-011_agent-thread-separation.md)
 - [ADR-012: App Homeダッシュボードのデータ取得方式](adr-012_app-home-data-source.md)
+- [ADR-013: IaCツール選定（Bicep / Terraform）](adr-013_iac-tool-selection.md)
+- [ADR-014: Agent B初期スコープの操作一覧・MCPツール・RBAC・承認境界](adr-014_agent-b-initial-scope.md)
