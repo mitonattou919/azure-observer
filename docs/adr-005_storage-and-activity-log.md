@@ -50,3 +50,12 @@ tool_call:  agent, tool_name, arguments, result_summary, approved_by(nullable), 
 - 複雑な集計・検索クエリ（例: 週次レポートの横断検索）が将来必要になった場合、Table Storageの
   クエリ機能は限定的なため、PostgreSQL等への移行を再検討する必要がある
 - 問い合わせ履歴の閲覧UIは本フェーズのスコープ外。運用者がTable Storageを直接参照する運用とする
+
+## Review Note (2026-07-19)
+
+Issue #2（Slack画面設計）の検討で、Agent Aの質問導線がDMと「sre」チャンネル@メンションの
+2つに増えたことに伴い、スレッドマッピングのキーを本ADR時点の想定（`user_id → threadId`）から
+`(user_id, entry_point) → threadId` に変更することが[[adr-011_agent-thread-separation]]で決定した。
+また、Agent Bは申請ごとの使い捨てスレッドとなるため永続マッピングテーブルには書かず、
+実行時の`threadId`を`activity_log`のレコードにのみ記録する。ストレージ選定（Azure Table Storage）
+自体や`activity_log`の基本データモデルは変更しない。
