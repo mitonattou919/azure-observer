@@ -20,7 +20,7 @@ var namePrefix = '${workload}-${env}-${instance}'
 
 var tags resourceTags = {
   Owner: ownerEmail
-  Project: 'sre: Azure Observer for SRE'
+  Project: '${workload}: Azure Observer for SRE'
   Environment: env
 }
 
@@ -40,6 +40,7 @@ module storage 'modules/storage.bicep' = {
     name: toLower('st${workload}${env}${instance}')
     location: location
     tags: tags
+    principalId: managedIdentity.outputs.principalId
   }
 }
 
@@ -50,6 +51,7 @@ module keyVault 'modules/key-vault.bicep' = {
     location: location
     tags: tags
     tenantId: tenant().tenantId
+    principalId: managedIdentity.outputs.principalId
   }
 }
 
