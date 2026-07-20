@@ -1,6 +1,6 @@
 # ADR-017: 共有ACRの利用とコンテナイメージ配布方式
 
-- Status: Accepted
+- Status: Accepted（「イメージ配布方式」の決定のみ一部Superseded by [[adr-019_mcp-server-builtin-auth]]）
 - Date: 2026-07-20
 
 ## Context
@@ -45,3 +45,13 @@ Issue #8。Azure MCP ServerをContainer Appsにデプロイするには、コン
   個別に持っている必要がある
 - 将来CI/CD化する際は、`main.bicep`のイメージ参照パラメータ化はそのまま活かせる
   （ビルド成果物の受け渡し口を変えるだけで済む）
+
+## Superseded (2026-07-20)
+
+「イメージ配布」の`docker build` + `docker push`という手段のみ[[adr-019_mcp-server-builtin-auth]]で
+supersedeした。Azure MCP Serverは公式イメージ（`mcr.microsoft.com/azure-sdk/azure-mcp`）を
+無改造で自己ホストする前提のためこのリポジトリにDockerfileは存在せず、`docker build`できないことが
+Issue #8実装中に判明したため。実際の配布手段は`az acr import`（公式イメージを共有ACRへ直接コピー）に
+変更する。CI/CDを組まず手動運用とする方針、クロスRGロール割り当て（`acr-rbac.bicep`）、
+`main.bicep`がイメージのフルリファレンスをパラメータとして受け取る設計など、本ADRの他の決定事項は
+変更していない。
