@@ -16,8 +16,8 @@ param acrLoginServer string
 @description('コンテナイメージのフルリファレンス(例: crmngdev001.azurecr.io/azure-mcp-server:latest)')
 param image string
 
-@description('有効化するAzure MCPのツール種別(--namespace)。Issue #4で申請フロー対象操作が確定してから確定値に置き換える(ADR-019)')
-param namespace string
+@description('有効化するAzure MCPのツール種別(--namespace)の配列。--namespaceは複数指定可能なオプションのため配列で受け取る。Issue #4で申請フロー対象操作が確定してから確定値に置き換える(ADR-019)')
+param namespaces array
 
 param tenantId string
 
@@ -60,16 +60,18 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
           name: 'azure-mcp-server'
           image: image
           // --transport httpで起動しないとデフォルトのstdioトランスポートのままIngress経由で疎通しない(ADR-019)
-          args: [
+          // --namespaceは複数指定可能なオプションのため、namespacesの各要素ごとに--namespace <ns>を展開する
+          args: concat([
             '--transport'
             'http'
             '--outgoing-auth-strategy'
             'UseHostingEnvironmentIdentity'
             '--mode'
             'all'
+          ], flatten([for ns in namespaces: [
             '--namespace'
-            namespace
-          ]
+            ns
+          ]]))
           env: [
             {
               name: 'AZURE_MCP_INCLUDE_PRODUCTION_CREDENTIALS'

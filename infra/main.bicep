@@ -31,8 +31,8 @@ param acrResourceGroupName string
 @description('Azure MCP Serverのコンテナイメージのフルリファレンス (ADR-017)')
 param mcpServerImage string
 
-@description('有効化するAzure MCPのツール種別(--namespace)。Issue #4で申請フロー対象操作が確定してから確定値に置き換える (ADR-019)')
-param mcpServerNamespace string
+@description('有効化するAzure MCPのツール種別(--namespace)の配列。Issue #4で申請フロー対象操作が確定してから確定値に置き換える (ADR-019)')
+param mcpServerNamespaces array
 
 @description('MCPサーバー自身を表すリソース側App RegistrationのクライアントID (ADR-019, Issue #8で作成)')
 param mcpServerResourceAppRegistrationClientId string
@@ -132,7 +132,7 @@ module mcpServer 'modules/mcp-server.bicep' = {
     managedIdentityClientId: managedIdentity.outputs.clientId
     acrLoginServer: '${acrName}.azurecr.io'
     image: mcpServerImage
-    namespace: mcpServerNamespace
+    namespaces: mcpServerNamespaces
     tenantId: tenant().tenantId
     resourceAppRegistrationClientId: mcpServerResourceAppRegistrationClientId
   }
