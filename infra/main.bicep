@@ -31,14 +31,11 @@ param acrResourceGroupName string
 @description('Azure MCP Serverのコンテナイメージのフルリファレンス (ADR-017)')
 param mcpServerImage string
 
-@description('Azure MCP Serverがリッスンするポート。実イメージのドキュメントで確認した実値を渡すこと')
-param mcpServerContainerPort int
+@description('有効化するAzure MCPのツール種別(--namespace)。Issue #4で申請フロー対象操作が確定してから確定値に置き換える (ADR-019)')
+param mcpServerNamespace string
 
-@description('MCPサーバー自身を表すリソース側App RegistrationのクライアントID (ADR-016, Issue #8で作成)')
+@description('MCPサーバー自身を表すリソース側App RegistrationのクライアントID (ADR-019, Issue #8で作成)')
 param mcpServerResourceAppRegistrationClientId string
-
-@description('MCPサーバーへのアクセスを許可するクライアント側App RegistrationのアプリケーションID一覧。Backend用(Issue #8)に加え、Issue #9でAgent A/B/C用が追加され次第ここに追記する (ADR-016)')
-param mcpServerAllowedClientAppIds array
 
 var namePrefix = '${workload}-${env}-${instance}'
 var defaultStorageAccountName = toLower('st${workload}${env}${instance}')
@@ -135,10 +132,9 @@ module mcpServer 'modules/mcp-server.bicep' = {
     managedIdentityClientId: managedIdentity.outputs.clientId
     acrLoginServer: '${acrName}.azurecr.io'
     image: mcpServerImage
-    containerPort: mcpServerContainerPort
+    namespace: mcpServerNamespace
     tenantId: tenant().tenantId
     resourceAppRegistrationClientId: mcpServerResourceAppRegistrationClientId
-    allowedClientAppIds: mcpServerAllowedClientAppIds
   }
   dependsOn: [
     acrRbac

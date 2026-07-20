@@ -13,16 +13,9 @@ param keyVaultNameOverride = 'kv-sre-dev-003'
 param acrName = 'crmngdev001'
 param acrResourceGroupName = 'rg-mng-dev-001'
 
-// 手動でdocker build & pushしたイメージのタグに合わせて更新する(ADR-017)
+// az acr importで共有ACRへ取り込んだ公式イメージのタグに合わせて更新する(ADR-017, ADR-019)
 param mcpServerImage = 'crmngdev001.azurecr.io/azure-mcp-server:REPLACE_ME'
-// Azure MCP Serverの実イメージのドキュメントで確認した実際のリッスンポートに置き換えること
-param mcpServerContainerPort = 0
-// infra/manual-portal-setup.mdの手順でリソース側App Registrationを作成した後、実際のクライアントIDに置き換える(ADR-016)
+// Issue #4で申請フロー対象操作が確定してから、有効化するAzure MCPのツール種別に置き換える(ADR-019)
+param mcpServerNamespace = 'REPLACE_ME_NAMESPACE_ISSUE4'
+// infra/manual-portal-setup.mdの手順でリソース側App Registrationを作成した後、実際のクライアントIDに置き換える(ADR-019)
 param mcpServerResourceAppRegistrationClientId = 'REPLACE_ME'
-// Backend用 + Agent A/B/C用(Issue #9)のクライアント側App RegistrationのクライアントIDを列挙する(ADR-016)
-param mcpServerAllowedClientAppIds = [
-  'REPLACE_ME_BACKEND_CLIENT_APP_ID'
-  'REPLACE_ME_AGENT_A_CLIENT_APP_ID'
-  'REPLACE_ME_AGENT_B_CLIENT_APP_ID'
-  'REPLACE_ME_AGENT_C_CLIENT_APP_ID'
-]
