@@ -18,7 +18,19 @@ IaCツールとしてBicepを採用した経緯は[ADR-013](adr-013_iac-tool-sel
 
 **例外: Storage Account**
 Storage Accountはハイフン不可・英数字のみのため、上記パターンをそのまま使えない。
-`st` + `workload` + `env` + `instance` を連結した `stsredev001` とする。
+`st` + `workload` + `env` + `instance` を連結した `stsredev001` を基本形とする。
+
+ただしStorage Account名はサブスクリプションではなくAzure全体でグローバル一意のため、
+上記パターンでも他テナントに先取りされて衝突することがある（dev環境で実際に発生。
+`stsredev001`が使用済みだったため`sa`プレフィックスにフォールバックし`sasredev001`を採用）。
+衝突した場合は`st`→`sa`等プレフィックスを変えて回避し、`main.bicep`の
+`storageAccountNameOverride`パラメータで実際の値を`{env}.bicepparam`から上書きする。
+
+**注意: Key Vaultも同様にグローバル一意**
+Key Vault名（`kv-{workload}-{env}-{instance}`）もAzure全体でグローバル一意のため衝突しうる
+（dev環境で実際に発生。`kv-sre-dev-001`が使用済みだったため`instance`を`003`にずらし
+`kv-sre-dev-003`を採用）。他リソースの命名規則（`namePrefix`基準）とは独立して、
+`main.bicep`の`keyVaultNameOverride`パラメータで個別に上書きする。
 
 ## 必須タグ
 
