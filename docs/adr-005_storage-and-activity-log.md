@@ -59,3 +59,10 @@ Issue #2（Slack画面設計）の検討で、Agent Aの質問導線がDMと「s
 また、Agent Bは申請ごとの使い捨てスレッドとなるため永続マッピングテーブルには書かず、
 実行時の`threadId`を`activity_log`のレコードにのみ記録する。ストレージ選定（Azure Table Storage）
 自体や`activity_log`の基本データモデルは変更しない。
+
+## Review Note (2026-07-20)
+
+Issue #6（Bicep実装）にて、Azure Table Storageのテーブル名にはアンダースコアを使用できない
+（英数字のみ、3〜63文字）という制約が判明した。そのため実装上のテーブル名は `activitylog`
+（アンダースコアなし）とする。本ADR中の `activity_log` という表記はデータモデル・
+`record_type`設計の説明上の名称として維持し、実際のリソース名のみ読み替える。
