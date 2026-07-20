@@ -12,8 +12,8 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
         │
         ▼
    Backend (Node.js/Python等)
-        ├─▶ Azure MCP（読み取り、Agent非経由。App Homeダッシュボード用の当月コスト・
-        │     アクティブアラートを定期キャッシュ）
+        ├─▶ Azure MCP（読み取り、Agent非経由。App Homeダッシュボード用のコスト最適化推奨・
+        │     サービス正常性イベントを定期キャッシュ。ADR-021）
         │
         ▼
   Foundry Agent Service（用途別に複数Agentを分離）
@@ -97,11 +97,14 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 ### 4. Slack UI の実装
 （画面構成・チャネルルーティングの決定背景は
 [ADR-010](../docs/adr-010_slack-entry-points-and-channel-routing.md) 〜
-[ADR-012](../docs/adr-012_app-home-data-source.md) を参照）
+[ADR-012](../docs/adr-012_app-home-data-source.md)、
+表示データの中身は[ADR-021](../docs/adr-021_mcp-tool-names-and-namespace.md)を参照）
 
 - **App Home（ダッシュボード。チャットUIではない）**
-  - 当月コスト、アクティブアラート一覧を表示。Foundry Agentを経由せず、Backendが
-    Azure MCPの読み取りツールを直接呼び出し、定期キャッシュした値を表示する（ADR-012）
+  - コスト最適化推奨事項一覧（Azure Advisor、`--category Cost`）、サービス正常性イベント一覧
+    （Azure ResourceHealth）を表示。Azure MCPに実際の当月消費額・発火中アラートを返すツールが
+    存在しないため、これらを代替指標として採用している（ADR-021）。Foundry Agentを経由せず、
+    Backendが Azure MCPの読み取りツールを直接呼び出し、定期キャッシュした値を表示する（ADR-012）
   - VM起動申請ボタン（押下でAgent B申請モーダルを開く）
   - JIT権限付与のプレースホルダー（将来機能。実装が無い段階でも導線のみ表示）
 - **Agent Aとの質問（DM／「sre」チャンネル@メンション）**
