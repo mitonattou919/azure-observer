@@ -38,15 +38,23 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 ## タスク一覧
 
 ### 1. Azure MCP Server のデプロイと認証設定
-- Azure MCP Serverを自己ホスト構成でデプロイする（Container Apps等）
+- Azure MCP Serverを自己ホスト構成でデプロイする（Container Apps。[ADR-018](../docs/adr-018_mcp-server-container-apps-config.md)）
+  - コンテナイメージは組織共通のAzure Container Registryを使う。プロジェクト固有のACRは作らない
+    （[ADR-017](../docs/adr-017_shared-acr-and-image-delivery.md)）。ビルド・pushはCI化せず手動運用とする
+  - Ingressはexternal（インターネット到達可能）とし、Entra ID認証（Easy Auth）で保護する。
+    VNet閉域化はこのフェーズでは行わない（[ADR-016](../docs/adr-016_mcp-server-inbound-auth.md)）
 - 認証はシークレットレスで構成する:
   - User-Assigned Managed IdentityをMCPサーバーにアタッチ
   - 環境変数 `AZURE_MCP_INCLUDE_PRODUCTION_CREDENTIALS=true` を設定し、
     Workload Identity / Managed Identity経由の認証チェーンを有効化する
-  - クライアント側からMCPサーバーを呼ぶ経路は別途Entra ID認証（App Registration）で保護する
+  - クライアント側からMCPサーバーを呼ぶ経路は、Container Apps組み込みのEasy Auth（`authConfig`）で
+    保護する。MCPサーバー本体（公式イメージ）には手を入れない
     （「誰がMCPサーバーを呼べるか」と「MCPサーバーがAzureに対して何をできるか」を分離する）。
     クライアントはFoundry Agent A/B/Cに加え、App Homeダッシュボード用にAzure MCPを直接呼ぶ
     Backend自身も含む（ADR-012）
+  - Entra ID App Registrationは用途で作成Issueが分かれる: MCPサーバー自身を表す**リソース側**と
+    **Backend用クライアント側**はIssue #8で作成し、**Agent A/B/C用クライアント側**（3つ）は
+    Issue #9で作成する（[ADR-016](../docs/adr-016_mcp-server-inbound-auth.md)）
 - Managed IdentityにAzure側でRBACロールを付与する（※ [ADR-001](../docs/adr-001_mcp-server-topology.md)により、
   Identityは用途別に分けず単一構成とする。Agentごとの権限差はManaged Identity側ではなく
   Foundry側の `allowed_tools` で制御する）:
