@@ -55,6 +55,13 @@ module keyVault 'modules/key-vault.bicep' = {
   }
 }
 
+module rbac 'modules/rbac.bicep' = {
+  name: 'rbac'
+  params: {
+    principalId: managedIdentity.outputs.principalId
+  }
+}
+
 output managedIdentityId string = managedIdentity.outputs.id
 output managedIdentityPrincipalId string = managedIdentity.outputs.principalId
 output managedIdentityClientId string = managedIdentity.outputs.clientId

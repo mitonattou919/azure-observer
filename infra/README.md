@@ -13,6 +13,7 @@ infra/
     managed-identity.bicep
     storage.bicep       # activity_log用Table Storage (ADR-005)
     key-vault.bicep      # シークレット管理用Key Vault (ADR-007)
+    rbac.bicep           # RG限定のReader/Virtual Machine Contributor付与 (Issue #7, ADR-014)
 ```
 
 Resource Group自体はBicep化せず、`az group create` で事前に手動作成する（`main.bicep` は
