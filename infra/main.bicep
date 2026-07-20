@@ -16,7 +16,17 @@ param location string = resourceGroup().location
 @description('所有者のメールアドレス(プレースホルダー)')
 param ownerEmail string
 
+@description('Storage Account名の上書き。命名規則のデフォルト値がグローバル一意制約で衝突した場合に指定する')
+param storageAccountNameOverride string = ''
+
+@description('Key Vault名の上書き。命名規則のデフォルト値がグローバル一意制約で衝突した場合に指定する')
+param keyVaultNameOverride string = ''
+
 var namePrefix = '${workload}-${env}-${instance}'
+var defaultStorageAccountName = toLower('st${workload}${env}${instance}')
+var storageAccountName = empty(storageAccountNameOverride) ? defaultStorageAccountName : storageAccountNameOverride
+var defaultKeyVaultName = 'kv-${namePrefix}'
+var keyVaultName = empty(keyVaultNameOverride) ? defaultKeyVaultName : keyVaultNameOverride
 
 var tags resourceTags = {
   Owner: ownerEmail
@@ -37,7 +47,7 @@ module storage 'modules/storage.bicep' = {
   name: 'storage'
   params: {
     // Storage Accountはハイフン不可のためnamePrefixを使わず個別連結する
-    name: toLower('st${workload}${env}${instance}')
+    name: storageAccountName
     location: location
     tags: tags
     principalId: managedIdentity.outputs.principalId
@@ -47,7 +57,7 @@ module storage 'modules/storage.bicep' = {
 module keyVault 'modules/key-vault.bicep' = {
   name: 'key-vault'
   params: {
-    name: 'kv-${namePrefix}'
+    name: keyVaultName
     location: location
     tags: tags
     tenantId: tenant().tenantId
