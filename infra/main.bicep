@@ -1,6 +1,6 @@
 targetScope = 'resourceGroup'
 
-import { environment, workloadCode, instanceNumber, resourceTags } from 'types.bicep'
+import { environment, workloadCode, instanceNumber, resourceTags } from './types.bicep'
 
 @description('CAFリソース略語を除くサービス識別子(3文字固定)')
 param workload workloadCode = 'sre'
