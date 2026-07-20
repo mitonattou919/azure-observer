@@ -1,6 +1,6 @@
 # ADR-012: App Homeダッシュボードのデータ取得方式
 
-- Status: Accepted
+- Status: Accepted（「表示するデータの中身」の決定のみSuperseded by [[adr-021_mcp-tool-names-and-namespace]]）
 - Date: 2026-07-19
 
 ## Context
@@ -51,3 +51,11 @@
   該当箇所の記述を更新する
 - キャッシュ更新ジョブが[[adr-004_in-process-scheduler]]のスケジューラに追加されるため、
   同ADRが受容したリスク（マルチレプリカ化時の重複実行）がこのジョブにも同様に適用される
+
+## Superseded (2026-07-20)
+
+Issue #30にて、Azure MCP Serverには実際の当月消費額・発火中アラートを返すツールが存在しないことが
+判明した。「当月コスト」「アクティブアラート一覧」という表示データの中身を、コスト最適化推奨事項
+（Azure Advisor）・サービス正常性イベント（Azure ResourceHealth）に変更する形で
+[[adr-021_mcp-tool-names-and-namespace]]がsupersedeした。データ取得経路（Backendが直接呼び、
+定期キャッシュする方式）自体の決定は変更なし。
