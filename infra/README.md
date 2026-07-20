@@ -14,6 +14,10 @@ infra/
     storage.bicep       # activity_log用Table Storage (ADR-005)
     key-vault.bicep      # シークレット管理用Key Vault (ADR-007)
     rbac.bicep           # RG限定のReader/Virtual Machine Contributor付与 (Issue #7, ADR-014)
+    acr-rbac.bicep        # 共有ACR(別RG)へのAcrPull付与 (Issue #8, ADR-017)
+    log-analytics.bicep   # ACA標準ログ収集先のLog Analyticsワークスペース (Issue #8, ADR-015, ADR-018)
+    container-apps-environment.bicep  # Container Apps Environment (Issue #8, ADR-018)
+    mcp-server.bicep      # Azure MCP Server本体 + Easy Auth (Issue #8, ADR-016, ADR-017, ADR-018)
 ```
 
 Resource Group自体はBicep化せず、`az group create` で事前に手動作成する（`main.bicep` は
