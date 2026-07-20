@@ -53,7 +53,7 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
         │       ローカル開発時は.envを併用）
         │
         ▼
-  Foundry Agent Service（Agent A / B / C、Agentごとに別Entra ID App Registrationで下記に接続）
+  Foundry Agent Service（Agent A / B / C、Projectのmanaged identity共有で下記に接続）
         ├─ Agent A（相談・読み取り専用）: MS Learn MCP / MRC MCP / Azure MCP
         ├─ Agent B（申請フロー・限定書き込み）: Azure MCP
         └─ Agent C（定期バッチ）: Azure MCP / MRC MCP
@@ -110,8 +110,9 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 
 - Azure Container Apps（`minReplicas=1`）上のPythonアプリとして、Slack Socket Mode接続、
   Foundry Agent呼び出し、承認フロー制御、バッチスケジューリングを1プロセスに統合する
-- Foundry Agent A/B/Cへの接続は、Agentごとに別のEntra ID App Registrationで行う
-  （[ADR-002](adr-002_per-agent-app-registration.md)）
+- Foundry Agent A/B/CからAzure MCP Serverへの接続は、Foundry Projectのmanaged identityを
+  Agent A/B/C共有で使う（[ADR-020](adr-020_agent-mcp-auth-project-managed-identity.md)。
+  [ADR-002](adr-002_per-agent-app-registration.md)から変更）
 - ユーザーID→threadIdマッピング、承認待ち状態、監査ログ／問い合わせ履歴は
   すべてAzure Table Storageの `activity_log` テーブル等に永続化する（[ADR-005](adr-005_storage-and-activity-log.md)）
 - Foundry/MCP呼び出し失敗時は、内部エラー詳細を出さずSlackにエラーメッセージのみ返す
@@ -166,7 +167,7 @@ Slack (App Home[ダッシュボード] / DM / 「sre」チャンネル@メンシ
 
 - 実装インストラクション: [`.claude/CLAUDE.md`](../.claude/CLAUDE.md)
 - [ADR-001: Azure MCP Serverの構成トポロジーと防御方式](adr-001_mcp-server-topology.md)
-- [ADR-002: Agentごとに個別のEntra ID App RegistrationでMCPサーバーに接続する](adr-002_per-agent-app-registration.md)
+- [ADR-002: Agentごとに個別のEntra ID App RegistrationでMCPサーバーに接続する（[ADR-020](adr-020_agent-mcp-auth-project-managed-identity.md)によりsupersede済み）](adr-002_per-agent-app-registration.md)
 - [ADR-003: Backendのホスティング基盤と言語](adr-003_backend-hosting.md)
 - [ADR-004: Agent C定期バッチのトリガー方式](adr-004_in-process-scheduler.md)
 - [ADR-005: 永続化ストレージとアクティビティログのデータモデル](adr-005_storage-and-activity-log.md)
