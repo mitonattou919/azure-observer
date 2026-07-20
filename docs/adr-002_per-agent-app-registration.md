@@ -1,6 +1,6 @@
 # ADR-002: Agentごとに個別のEntra ID App RegistrationでMCPサーバーに接続する
 
-- Status: Accepted
+- Status: Superseded by [[adr-020_agent-mcp-auth-project-managed-identity]]
 - Date: 2026-07-19
 
 ## Context
@@ -28,3 +28,12 @@ MCPサーバーに接続する。MCPサーバー自体のManaged Identity（[[ad
 - App Registrationの作成・管理対象が3つに増えるが、Azure RBAC設計のような複雑さは伴わず
   コストインパクトも小さい
 - 将来Agentが増えた場合も同じパターン（Agent追加 = App Registration追加）で拡張できる
+
+## Superseded (2026-07-20)
+
+Issue #10着手時、本ADRの方式がFoundry Agent Serviceの実際のMCP認証方式（Key-based /
+Microsoft Entra - agent identity / Microsoft Entra - project managed identity / OAuth identity
+passthrough / Unauthenticated の5種類のみ）のいずれにも該当しないことが判明したため、
+[[adr-020_agent-mcp-auth-project-managed-identity]]でproject managed identity方式にsupersedeした。
+Issue #9で本ADRに基づき作成済みだった3つのApp Registration・Key Vaultシークレットは不要になり、
+Issue #10側で削除する。
